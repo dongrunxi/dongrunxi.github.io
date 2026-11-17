@@ -1,0 +1,21 @@
+---
+// 主题切换 + 导航链接。文案取自 consts.ts 的 NAV_LINKS。
+import { NAV_LINKS } from '../consts';
+---
+
+<nav class="nav-links" aria-label="主导航">
+  {NAV_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+  <a href="/rss.xml" aria-label="RSS 订阅">RSS</a>
+  <button class="theme-btn" id="theme-toggle" aria-label="切换明暗主题" title="切换明暗主题">◐</button>
+</nav>
+
+<script is:inline>
+  document.getElementById('theme-toggle')?.addEventListener('click', function () {
+    var html = document.documentElement;
+    var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {}
+  });
+</script>

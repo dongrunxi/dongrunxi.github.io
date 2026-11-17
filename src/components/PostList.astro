@@ -1,0 +1,32 @@
+---
+import { formatDate } from '../lib/posts';
+
+interface PostLike {
+  id: string;
+  data: {
+    title: string;
+    date: Date;
+    tags: string[];
+  };
+}
+
+interface Props {
+  posts: PostLike[];
+}
+
+const { posts } = Astro.props;
+---
+
+{posts.length === 0 && <p class="empty-hint">还没有文章，去写第一篇吧（npm run new -- "标题"）。</p>}
+
+{posts.map((post) => (
+  <article class="post-item">
+    <a class="post-item-title" href={`/posts/${post.id}/`}>{post.data.title}</a>
+    <div class="post-meta">
+      <span>{formatDate(post.data.date)}</span>
+      {post.data.tags.map((t) => (
+        <a class="tag-chip" href={`/tags/${t}/`}>{t}</a>
+      ))}
+    </div>
+  </article>
+))}

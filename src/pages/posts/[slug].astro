@@ -1,0 +1,39 @@
+---
+import { render } from 'astro:content';
+import { getPublishedPosts, formatDate } from '../../lib/posts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const published = await getPublishedPosts();
+const idx = published.findIndex((p) => p.id === post.id);
+const newer = idx > 0 ? published[idx - 1] : null;
+const older = idx < published.length - 1 ? published[idx + 1] : null;
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <header class="post-header">
+    <h1 class="post-title">{post.data.title}</h1>
+    <div class="post-meta">
+      {formatDate(post.data.date)}
+      {post.data.tags.map((t) => (
+        <a class="tag-chip" href={`/tags/${t}/`}>{t}</a>
+      ))}
+    </div>
+  </header>
+  <article class="prose">
+    <Content />
+  </article>
+  <nav class="post-nav">
+    {newer ? <a href={`/posts/${newer.id}/`}>← 较新：{newer.data.title}</a> : <span></span>}
+    {older && <a href={`/posts/${older.id}/`}>较旧：{older.data.title} →</a>}
+  </nav>
+</BaseLayout>

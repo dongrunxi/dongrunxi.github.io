@@ -1,0 +1,27 @@
+---
+import { getPublishedPosts } from '../../lib/posts';
+import PostList from '../../components/PostList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const tagMap = new Map<string, typeof posts>();
+  for (const p of posts) {
+    for (const t of p.data.tags) {
+      if (!tagMap.has(t)) tagMap.set(t, []);
+      tagMap.get(t)!.push(p);
+    }
+  }
+  return [...tagMap.entries()].map(([tag, taggedPosts]) => ({
+    params: { tag },
+    props: { taggedPosts },
+  }));
+}
+
+const { tag, taggedPosts } = Astro.props;
+---
+
+<BaseLayout title={`标签：${tag}`} description={`标签 ${tag} 下的全部文章`}>
+  <h1 class="page-title">标签：{tag}</h1>
+  <PostList posts={taggedPosts} />
+</BaseLayout>

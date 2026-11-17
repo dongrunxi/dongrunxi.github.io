@@ -1,0 +1,20 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pages = await getCollection('pages');
+const about = pages.find((p) => p.id === 'about');
+let Content = null;
+if (about) {
+  const rendered = await render(about);
+  Content = rendered.Content;
+}
+---
+
+<BaseLayout title="关于" description="关于本站与作者">
+  <h1 class="page-title">关于</h1>
+  <article class="prose">
+    {Content ? <Content /> : <p class="empty-hint">还没有填写「关于」页（src/content/pages/about.md）。</p>}
+  </article>
+</BaseLayout>

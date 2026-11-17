@@ -1,0 +1,8 @@
+---
+import { getPublishedPosts } from '../lib/posts';
+import PostList from '../components/PostList.astro';
+
+const posts = await getPublishedPosts();
+---
+
+<PostList {posts} />
